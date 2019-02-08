@@ -1,0 +1,105 @@
+
+//campus.mcgill.ca/emf/SWE/bkella/My Documents/ECSE 324/G11_Lab1/centered.axf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <__cs3_interrupt_vector>:
+			.global _start
+
+_start:
+							// NOTE: We LOAD N and SIGNAL to R4 and R5 respectively, making sure we don't overwrite
+							// these registeres. We wanted to minimize the number of LDR calls for greater performance
+			LDR R4, N		// R4 = N (number of elements)
+   0:	e59f406c 	ldr	r4, [pc, #108]	; 74 <N>
+			LDR R5, =SIGNAL // R5 = pointer to first sample
+   4:	e59f508c 	ldr	r5, [pc, #140]	; 98 <SIGNAL+0x20>
+			MOV R0, R4		// R4 = R0 
+   8:	e1a00004 	mov	r0, r4
+			MOV R1, R5		// R1 = R5 = pointer to first sample
+   c:	e1a01005 	mov	r1, r5
+			MOV R2, #0		// Initialize R2 (Sum) to 0
+  10:	e3a02000 	mov	r2, #0
+
+00000014 <FINDSUM>:
+
+FINDSUM:						// do {
+			LDR R3,[R1]			// 	R3 = *R1
+  14:	e5913000 	ldr	r3, [r1]
+			ADD R2, R2, R3		// 	R2 = R2 + R3	
+  18:	e0822003 	add	r2, r2, r3
+			ADD R1, R1, #4		// 	R1 = R1 + 4 
+  1c:	e2811004 	add	r1, r1, #4
+			SUBS R0, R0, #1		// 	R0 = R0 - 1
+  20:	e2500001 	subs	r0, r0, #1
+			BEQ LOG2			// } while (R0 > 0)
+  24:	0a000000 	beq	2c <LOG2>
+			B FINDSUM
+  28:	eafffff9 	b	14 <FINDSUM>
+
+0000002c <LOG2>:
+
+								// LOG2: Peforms R3 = Log2(R4)
+LOG2:		MOV R0, R4			// R0 = R4 = N
+  2c:	e1a00004 	mov	r0, r4
+			MOV R3, #0			// R3 = 0
+  30:	e3a03000 	mov	r3, #0
+
+00000034 <LOOP>:
+LOOP:		CMP R0, #1			// Perform R0 - 1 and store result in condition code
+  34:	e3500001 	cmp	r0, #1
+			BEQ AVG				// while ((R0-1) > 0) {
+  38:	0a000002 	beq	48 <AVG>
+			ADD R3, R3, #1		// 	R3 = R3 + 1
+  3c:	e2833001 	add	r3, r3, #1
+			ASR R0, R0, #1	 	// 	R0 >>= 1
+  40:	e1a000c0 	asr	r0, r0, #1
+			B LOOP 				// }	
+  44:	eafffffa 	b	34 <LOOP>
+
+00000048 <AVG>:
+
+AVG:							// AVG: Finds R0 = AVG(SIGNAL)
+			ASR R0, R2, R3		// R0 = R2 >> R3 (R0 = Sum >> Log2(N) = Sum / N)
+  48:	e1a00352 	asr	r0, r2, r3
+			MOV R1, R5			// Reset R1 to first element in list
+  4c:	e1a01005 	mov	r1, r5
+			B CENTER
+  50:	eaffffff 	b	54 <CENTER>
+
+00000054 <CENTER>:
+
+CENTER:							// do {
+			LDR R3, [R1]		//	R3 = *R1 (get current value)
+  54:	e5913000 	ldr	r3, [r1]
+			SUB R3, R3, R0		//  R3 = R3 - Average
+  58:	e0433000 	sub	r3, r3, r0
+			STR R3, [R1]		//  *R1 = R3  (Update current value with R3)
+  5c:	e5813000 	str	r3, [r1]
+			ADD R1, R1, #4		// 	R1 = R1 + 4 (Point to next sample)
+  60:	e2811004 	add	r1, r1, #4
+			SUBS R4, R4, #1		//	Decrement N
+  64:	e2544001 	subs	r4, r4, #1
+			BEQ END				//  GOTO END when complete
+  68:	0a000000 	beq	70 <END>
+			B CENTER			// }
+  6c:	eafffff8 	b	54 <CENTER>
+
+00000070 <END>:
+						
+END:		B END
+  70:	eafffffe 	b	70 <END>
+
+00000074 <N>:
+  74:	00000008 	.word	0x00000008
+
+00000078 <SIGNAL>:
+  78:	00000008 	.word	0x00000008
+  7c:	00000002 	.word	0x00000002
+  80:	00000004 	.word	0x00000004
+  84:	00000006 	.word	0x00000006
+  88:	00000003 	.word	0x00000003
+  8c:	00000004 	.word	0x00000004
+  90:	00000009 	.word	0x00000009
+  94:	00000001 	.word	0x00000001
+  98:	00000078 	.word	0x00000078

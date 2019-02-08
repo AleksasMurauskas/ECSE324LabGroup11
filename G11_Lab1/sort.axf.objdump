@@ -1,0 +1,86 @@
+
+//campus.mcgill.ca/emf/SWE/bkella/My Documents/ECSE 324/G11_Lab1/sort.axf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <__cs3_interrupt_vector>:
+			.text
+			.global _start
+
+_start:
+			LDR R4, N			// R4 = N (number of elements)
+   0:	e59f4054 	ldr	r4, [pc, #84]	; 5c <N>
+			LDR R5, =LIST		// R5 = pointer to first element
+   4:	e59f5074 	ldr	r5, [pc, #116]	; 80 <LIST+0x20>
+			MOV R0, #0			// R0 -> SORTED FLAG. (1 = SORTED)
+   8:	e3a00000 	mov	r0, #0
+
+0000000c <SORT>:
+
+SORT:
+			CMP R0, #1			// Peform R0 - 1 and store result in condition code
+   c:	e3500001 	cmp	r0, #1
+			BEQ END				// if (R0 == 1) -> SORTED, GOTO END
+  10:	0a000010 	beq	58 <END>
+			MOV R0, #1			// Set R0 to SORTED
+  14:	e3a00001 	mov	r0, #1
+			MOV R2, R4			// R2 = R4 = N
+  18:	e1a02004 	mov	r2, r4
+			MOV R7, R5			// Point R7 to first element
+  1c:	e1a07005 	mov	r7, r5
+			ADD R8, R7, #4		// Point R8 to second element
+  20:	e2878004 	add	r8, r7, #4
+
+00000024 <LOOP>:
+LOOP:		SUBS R2, R2, #1		// R2 = R2 - 1
+  24:	e2522001 	subs	r2, r2, #1
+			BEQ SORT			// If R2 == 0, GOTO SORT
+  28:	0afffff7 	beq	c <SORT>
+			LDR R1, [R7]		// R1 = *R7 (Assign R1 value R7 points to)
+  2c:	e5971000 	ldr	r1, [r7]
+			LDR R3, [R8]		// R3 = *R8 (Assign R3 value R8 points to)
+  30:	e5983000 	ldr	r3, [r8]
+			CMP R1, R3			// Compare value *R7 to value *R8
+  34:	e1510003 	cmp	r1, r3
+			BGT SWAP			// if (*R7 > *R8) GOTO SWAP
+  38:	ca000002 	bgt	48 <SWAP>
+
+0000003c <INCR>:
+								// NOTE: GT condition suffix is used in case of DUPLICATES
+INCR:		ADD R7, R7, #4		// Point R7 to next element
+  3c:	e2877004 	add	r7, r7, #4
+			ADD R8, R8, #4		// Point R8 to next element
+  40:	e2888004 	add	r8, r8, #4
+			B LOOP
+  44:	eafffff6 	b	24 <LOOP>
+
+00000048 <SWAP>:
+
+SWAP:		STR R3, [R7]		// *R7 = value pointed to by R8 (R3)
+  48:	e5873000 	str	r3, [r7]
+			STR R1, [R8]		// *R8 = value pointed to by R7 (R1)
+  4c:	e5881000 	str	r1, [r8]
+			MOV R0, #0			// Set R0 to NOT SORTED
+  50:	e3a00000 	mov	r0, #0
+			B INCR				// Increment values		
+  54:	eafffff8 	b	3c <INCR>
+
+00000058 <END>:
+
+END:		B END
+  58:	eafffffe 	b	58 <END>
+
+0000005c <N>:
+  5c:	00000008 	.word	0x00000008
+
+00000060 <LIST>:
+  60:	fffffffd 	.word	0xfffffffd
+  64:	00000064 	.word	0x00000064
+  68:	00000005 	.word	0x00000005
+  6c:	00000006 	.word	0x00000006
+  70:	00000003 	.word	0x00000003
+  74:	00000003 	.word	0x00000003
+  78:	00000008 	.word	0x00000008
+  7c:	0000000a 	.word	0x0000000a
+  80:	00000060 	.word	0x00000060
