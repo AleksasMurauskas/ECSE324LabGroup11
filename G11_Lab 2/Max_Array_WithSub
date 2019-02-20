@@ -13,8 +13,7 @@ extern int MAX_ARR(int arr, int s)
 int main(){
 	int array[] = {10, 20, 45, 5, 6, 87, 22};
 	int arr_size = sizeof(array);
-
-	max = MAX_ARR(array,arr_size);
+	int max = MAX_ARR(array,arr_size);
 	printf("The largest integer within the array is %d\n", max);
 	return max; 
 }
