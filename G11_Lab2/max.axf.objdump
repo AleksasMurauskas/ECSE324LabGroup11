@@ -1,0 +1,84 @@
+
+//campus.mcgill.ca/emf/SWE/bkella/My Documents/ECSE 324/G11_Lab2/max.axf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <__cs3_interrupt_vector>:
+			.text
+			.global _start
+
+
+_start:
+			LDR R4, =RESULT  // R4 points to result location
+   0:	e59f4068 	ldr	r4, [pc, #104]	; 70 <NUMBERS+0x1c>
+			LDR R2, [R4, #4] // R0 = N (Number of elements in list)
+   4:	e5942004 	ldr	r2, [r4, #4]
+			ADD R1, R4, #8   // R1 -> Points to first number
+   8:	e2841008 	add	r1, r4, #8
+			BL MAX			 // Perform "Branch and Link" instruction, storing PC+4 in the Link register (R14)
+   c:	eb000000 	bl	14 <MAX>
+							 // and then branch to MAX (PC = MAX)
+			B DONE			 // Branch to DONE
+  10:	ea00000b 	b	44 <DONE>
+
+00000014 <MAX>:
+
+// Max (Number of elements, Pointer to first number)
+//		R2 -> Number of elements
+//		R1 -> Pointer to first number
+//		R0 -> Hold max
+MAX:		PUSH {R4-R12,LR} // Save state by pushing R4 - LR onto the stack
+  14:	e92d5ff0 	push	{r4, r5, r6, r7, r8, r9, r10, r11, r12, lr}
+			LDR R0, [R1]	 // R0 holds the MAXIMUM of the list
+  18:	e5910000 	ldr	r0, [r1]
+
+0000001c <LOOP>:
+LOOP:		SUBS R2, R2, #1  // decrement the loop counter
+  1c:	e2522001 	subs	r2, r2, #1
+			BEQ MAXFIN		 // If all elements have been scanned (R2 = 0), branch to finish 		 	 
+  20:	0a000005 	beq	3c <MAXFIN>
+			ADD R1, R1, #4   // R1 points to next num in list
+  24:	e2811004 	add	r1, r1, #4
+			LDR R3, [R1]	 // R3 holds the next num in the list
+  28:	e5913000 	ldr	r3, [r1]
+			CMP R0, R3		 // if (R0 > R3) { Compare maximum with current
+  2c:	e1500003 	cmp	r0, r3
+			BGE LOOP		 // GOTO LOOP
+  30:	aafffff9 	bge	1c <LOOP>
+			MOV R0, R3		 // else { R0 = R3 (UPDATE MAXIMUM) }
+  34:	e1a00003 	mov	r0, r3
+			B LOOP			 // GOTO LOOP
+  38:	eafffff7 	b	1c <LOOP>
+
+0000003c <MAXFIN>:
+MAXFIN:		POP {R4-R12,LR}		 // Restore state by popping R4 - LR from stack
+  3c:	e8bd5ff0 	pop	{r4, r5, r6, r7, r8, r9, r10, r11, r12, lr}
+			BX LR			 // Branch to LR
+  40:	e12fff1e 	bx	lr
+
+00000044 <DONE>:
+
+DONE:		STR R0, [R4]     // store the result to the memory location
+  44:	e5840000 	str	r0, [r4]
+
+00000048 <END>:
+
+END:		B END			 // infinite loop!
+  48:	eafffffe 	b	48 <END>
+
+0000004c <RESULT>:
+  4c:	00000000 	.word	0x00000000
+
+00000050 <N>:
+  50:	00000007 	.word	0x00000007
+
+00000054 <NUMBERS>:
+  54:	00000004 	.word	0x00000004
+  58:	00000005 	.word	0x00000005
+  5c:	00000003 	.word	0x00000003
+  60:	00000006 	.word	0x00000006
+  64:	00000001 	.word	0x00000001
+  68:	00000008 	.word	0x00000008
+  6c:	00000002 	.word	0x00000002
+  70:	0000004c 	.word	0x0000004c

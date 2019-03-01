@@ -1,0 +1,48 @@
+
+//campus.mcgill.ca/emf/SWE/bkella/My Documents/ECSE 324/G11_Lab2/stack.axf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <__cs3_interrupt_vector>:
+			.text
+			.global _start
+
+_start:
+			MOV R0, #8			// R0 = 8
+   0:	e3a00008 	mov	r0, #8
+			MOV R1, #2			// R1 = 2
+   4:	e3a01002 	mov	r1, #2
+			MOV R2, #9			// R2 = 9
+   8:	e3a02009 	mov	r2, #9
+			B PUSHR0			// PUSH R0 onto the stack
+   c:	eaffffff 	b	10 <PUSHR0>
+
+00000010 <PUSHR0>:
+
+PUSHR0:		// PUSHR0: Pushes R0 onto the stack using STR
+			STR R0, [SP, #-4]!	// Store R0 at (SP - 4) memory location. Use writeback suffix to set SP = SP-4 
+  10:	e52d0004 	push	{r0}		; (str r0, [sp, #-4]!)
+								// after the operation is complete
+			PUSH {R1, R2}		// Push R1 and R2 onto the stack
+  14:	e92d0006 	push	{r1, r2}
+			B POPR0R2			// Branch to POPR0R2
+  18:	eaffffff 	b	1c <POPR0R2>
+
+0000001c <POPR0R2>:
+
+POPR0R2:	// POPR0R2: Pop R0 - R2 from the stack using LDMIA
+			// op{addr_mode}{cond} Rn{!}, reglist
+			LDMIA SP!, {R0-R2}		// LDMIA -> Load multiple registeres
+  1c:	e8bd0007 	pop	{r0, r1, r2}
+									// with address mode IA (Increment After)
+									// SP -> register on which the memory addresses are based
+									// ! -> writeback suffix. final address will be written into SP
+									// {R0-R2} -> List of registers to be loaded
+			B END				// Branch to END
+  20:	eaffffff 	b	24 <END>
+
+00000024 <END>:
+
+END:		B END				// Infinite loop
+  24:	eafffffe 	b	24 <END>
