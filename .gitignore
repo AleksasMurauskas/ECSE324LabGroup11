@@ -19,3 +19,8 @@
 *.exe
 *.out
 *.app
+
+# ARM Specific Generated files
+*.axf
+*.axf.objdump
+
