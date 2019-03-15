@@ -16,6 +16,11 @@
 	.global FPGA_JP2_ISR
 	.global FPGA_PS2_DUAL_ISR
 
+	.global hps_tim3_int flag
+hps_tim0_int_flag:
+	.word 0x0
+	
+
 A9_PRIV_TIM_ISR:
 	BX LR
 	

@@ -7,7 +7,7 @@
 			HEX2=0x00000004,
 			HEX3=0x00000008,
 			HEX4=0x00000010,
-			HEX5=0x00000020,
+			HEX5=0x00000020
 		} HEX_t 
 
 	extern void HEX_clear_ASM(HEX_t hex);
