@@ -53,7 +53,7 @@ COMPLETE_CHAR_LOOP:
 VGA_clear_pixelbuff_ASM:
 	//Initialize clearance loops
 	PUSH {R0-R10,LR} //PUSH the state for the function call
-	LDR R2,=CHAR_BUFFER //Holds  the location of the PIXEL_BUFFER
+	LDR R2,=PIXEL_BUFFER //Holds  the location of the PIXEL_BUFFER
 	MOV R3, #0  //Holds the x counter
 	MOV R4, #-1   //Holds the y counter 
 	MOV R5, #0   // Holds an empty value

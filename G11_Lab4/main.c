@@ -40,24 +40,25 @@ void test_pixel() {
 void VGA_Test(){
 	while(true){
 		if(read_PB_data_ASM()!=0){
-			if(read_slider_switches_ASM()==0){
-				VGA_clear_charbuff_ASM();
-			}
-			else if(read_slider_switches_ASM()=1){
-				VGA_clear_pixelbuff_ASM();
-			}
-			else if(read_slider_switches_ASM()=2){
+			if(read_slider_switches_ASM() == 0) {
 				test_char();
 			}
-			else if(read_slider_switches_ASM()=3){
-				test_char();
+			else {
+				test_byte();
 			}
-			else if(read_slider_switches_ASM()=4){
-				test_char();
-			}
+		}
+		else if (read_PB_data_ASM() == 2) {
+			test_pixel();
+		}
+		else if (read_PB_data_ASM() == 4) {
+			VGA_clear_charbuff_ASM();
+		}
+		else if (read_PB_data_ASM() == 8) {
+			VGA_clear_pixelbuff_ASM();
 		}
 	}
 }
+
 
 void ps2_Test(){
 	VGA_clear_charbuff_ASM();
@@ -91,6 +92,11 @@ void audio_Test(){
 		for(a=0;a<240;a++){
 			if(write_audio_FIFO_ASM(0x00FFFFFF)!=1){
 				a--;
+			}
+		}
+		for(i=0;i<240;i++){
+			if(write_audio_data_ASM(0x00000000) !=1){
+				i--;
 			}
 		}
 	}
